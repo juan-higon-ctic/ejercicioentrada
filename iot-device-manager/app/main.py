@@ -8,9 +8,8 @@ models.Base.metadata.create_all(bind=database.engine)
 
 # 2. Inicializar la aplicación FastAPI
 app = FastAPI(
-    title="IoT Device Management System",
+    title="Prueba IoT Device Management System",
     description="API para gestionar dispositivos IoT y simular recolección de datos",
-    version="1.0.0"
 )
 
 # 3. Incluir las rutas (Endpoints) de nuestros archivos en la carpeta api/
