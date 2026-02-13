@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+
+# --- Framework de la API ---
+fastapi          # Crea los endpoints
+uvicorn[standard] # El servidor que hace funcionar a FastAPI
+
+# --- Base de Datos ---
+sqlalchemy       # Herramienta para manejar la base de datos SQL con código Python
+pydantic         # Validador de datos (asegura que los datos sean correctos)
