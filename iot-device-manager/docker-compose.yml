@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  iot-app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Esto hace que si editas el código en tu PC, se actualice en Docker al momento
+      - .:/app
+    environment:
+      # Configuramos la ruta de la base de datos
+      - DATABASE_URL=sqlite:///./iot.db
