@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query # <--- IMPORTANTE: Añadir Query aquí
 from sqlalchemy.orm import Session
 from typing import List
 from app import models, schemas, database
+from app.database import get_db
 
-# Configuramos el router para agrupar todas las operaciones de dispositivos bajo /devices
+# Configuramos el router
 router = APIRouter(prefix="/devices", tags=["Devices"])
 
-@router.post("/", response_model=schemas.DeviceResponse)
+@router.post("/", response_model=schemas.DeviceResponse) #funcion para subir un nuevo dispositivo
 def create_device(device: schemas.DeviceCreate, db: Session = Depends(database.get_db)):
     """
     Endpoint para registrar un nuevo dispositivo IoT en el sistema.
@@ -22,7 +23,7 @@ def create_device(device: schemas.DeviceCreate, db: Session = Depends(database.g
     db.refresh(db_device)
     return db_device
 
-@router.get("/", response_model=List[schemas.DeviceResponse])
+@router.get("/", response_model=List[schemas.DeviceResponse]) #funcion para recibir las de la base de datos
 def read_devices(db: Session = Depends(database.get_db)):
     """
     Endpoint para obtener el listado completo de dispositivos registrados.
@@ -30,7 +31,7 @@ def read_devices(db: Session = Depends(database.get_db)):
     # Realiza una consulta SELECT * FROM devices y devuelve todos los resultados
     return db.query(models.Device).all()
 
-@router.delete("/{device_id}")
+@router.delete("/{device_id}") #funcion para borrar un dispositivo
 def delete_device(device_id: int, db: Session = Depends(database.get_db)):
     """
     Endpoint para eliminar un dispositivo mediante su ID único.
@@ -47,3 +48,24 @@ def delete_device(device_id: int, db: Session = Depends(database.get_db)):
     db.commit()
     
     return {"message": "Dispositivo eliminado con éxito"}
+
+@router.patch("/{device_id}/rename") #funcion para cambiar el nombre de algun dispositivo
+def rename_device(
+    device_id: int, 
+    new_name: str = Query(..., description="El nuevo nombre para el dispositivo"),
+    db: Session = Depends(get_db)
+):
+    """
+    **Cambiar nombre de dispositivo:**
+    Permite actualizar el nombre de un dispositivo existente usando su ID.
+    """
+    device = db.query(models.Device).filter(models.Device.id == device_id).first()
+    
+    if not device:
+        raise HTTPException(status_code=404, detail="Dispositivo no encontrado")
+    
+    device.name = new_name
+    db.commit()
+    db.refresh(device)
+    
+    return {"status": "ok", "new_name": device.name}

@@ -31,21 +31,21 @@ async def collect_data():
             timestamp = datetime.now()
             
             for device in devices:
-                # 3. Simulación de lectura de sensores (Mocking)
-                # Formateamos la salida en consola según los requisitos del proyecto
-                print(f"[{timestamp}] Collecting data from device:")
-                print(f"({device.device_type}) Mock {device.name} reading:")
-                
-                # Generamos valores eléctricos aleatorios realistas
+
                 reading = {
-                    "voltage": round(random.uniform(220.0, 240.0), 2), # Voltaje estándar
-                    "current": round(random.uniform(10.0, 15.0), 2),   # Amperaje aleatorio
-                    "power": round(random.uniform(2500.0, 3000.0), 2)  # Consumo en Watts
+                    "voltage": round(random.uniform(220.0, 240.0), 2),
+                    "current": round(random.uniform(10.0, 15.0), 2),
+                    "power": round(random.uniform(2500.0, 3000.0), 2)
                 }
                 print(str(reading))
                 
-                # 4. Actualizamos el campo 'last_reading_at' en el objeto del dispositivo
-                # Esto se reflejará en la base de datos al hacer el commit
+                
+                device.voltage = reading["voltage"]
+                device.current = reading["current"]
+                device.power = reading["power"]
+                
+
+                # 4. Actualizamos el tiempo 
                 device.last_reading_at = timestamp
             
             # 5. Confirmamos los cambios en la base de datos (Guardar)

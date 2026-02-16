@@ -12,14 +12,14 @@ app = FastAPI(
     description="API para gestionar dispositivos IoT y simular recolección de datos",
 )
 
-# 3. Incluir las rutas (Endpoints) de nuestros archivos en la carpeta api/
+# 3. Incluir las rutas (Endpoints) de nuestros archivos en la carpeta api/:
 # 'devices.router' contiene las rutas para crear/listar dispositivos
 app.include_router(devices.router)
 
 # 'collector.router' contiene las rutas para iniciar/parar la recolección
 app.include_router(collector.router)
 
-# 4. Ruta base de cortesía
+# 4. Ruta base 
 @app.get("/", tags=["General"])
 def read_root():
     return {

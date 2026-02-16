@@ -6,8 +6,23 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Esto hace que si editas el código en tu PC, se actualice en Docker al momento
       - .:/app
     environment:
-      # Configuramos la ruta de la base de datos
-      - DATABASE_URL=sqlite:///./iot.db
+      - DATABASE_URL=sqlite:///./app/iot.db
+
+  grafana:  # <-- Ahora está bien alineado debajo de iot-app
+    image: grafana/grafana:latest
+    container_name: grafana-1
+    ports:
+      - "3000:3000"
+    user: "0"  
+    environment:
+      - GF_PLUGINS_INSTALL=frser-sqlite-datasource
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - grafana_data:/var/lib/grafana 
+      - .:/app:ro 
+
+volumes:
+  grafana_data:

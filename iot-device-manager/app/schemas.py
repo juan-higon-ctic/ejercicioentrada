@@ -9,6 +9,9 @@ class DeviceCreate(BaseModel):
     device_type: str
     status: str = "active"
 
+class DeviceUpdateName(BaseModel): #funcion para cmambiar el nombre
+    name: str
+
 # Lo que responde el sistema. #Define qué le devuelvo al usuario cuando consulta la lista.
 # Aquí sí incluyo el id y la last_reading_at para que pueda ver cuándo se actualizó por última vez.
 class DeviceResponse(BaseModel):
@@ -18,6 +21,9 @@ class DeviceResponse(BaseModel):
     status: str
     created_at: datetime
     last_reading_at: Optional[datetime] = None
+    voltage: Optional[float] = None
+    current: Optional[float] = None
+    power: Optional[float] = None
 
     class Config:
         from_attributes = True
