@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
-class Device(Base):
+class Device(Base): #Tabla inicial
     __tablename__ = "devices"
 
     id = Column(Integer, primary_key=True, index=True) #el id de cada elemento
@@ -19,7 +19,7 @@ class Device(Base):
     power = Column(Float, nullable=True)
     measurements = relationship("Measurement", back_populates="device")
 
-class Measurement(Base):
+class Measurement(Base): #Tabla para guardar el valor maximo
     __tablename__ = "measurements"
 
     id = Column(Integer, primary_key=True, index=True)

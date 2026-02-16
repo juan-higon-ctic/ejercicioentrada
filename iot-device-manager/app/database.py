@@ -1,4 +1,4 @@
-#La funcion de este archivo es saber donde estan los dato y como acceder a ellos.
+#La funcion de este archivo es saber donde estan los datos y como acceder a ellos.
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base

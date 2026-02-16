@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 # Lo que envia el user
 #Define que para crear un dispositivo necesito obligatoriamente name y device_type. No pido el id ni la fecha, porque eso lo genera el sistema solo.
@@ -27,3 +27,21 @@ class DeviceResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+#------------------------------------------------Para la tabla de valores maximos
+# Esquema base con los datos comunes
+class MeasurementBase(BaseModel):
+    voltage: float
+    device_id: int
+
+# Esquema para cuando creamos una lectura (opcional si lo haces por código)
+class MeasurementCreate(MeasurementBase):
+    pass
+
+# Esquema para las respuestas de la API (Lo que sale hacia afuera)
+class MeasurementResponse(MeasurementBase):
+    id: int
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True # Esto permite leer modelos de SQLAlchemy

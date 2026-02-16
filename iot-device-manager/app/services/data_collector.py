@@ -38,7 +38,7 @@ async def collect_data():
                     "power": round(random.uniform(2500.0, 3000.0), 2)
                 }
                 print(str(reading))
-
+#----------------------------------------------------------------------------------------------------------FUNCION VMAX
                 # 1. Metemeos los datos en la tabla nueva, la que usaremos como historico
                 nueva_medicion = models.Measurement(
                     voltage=reading["voltage"],
@@ -56,7 +56,7 @@ async def collect_data():
 
                 # 4. Actualizamos el tiempo 
                 device.last_reading_at = timestamp
-            
+ #-----------------------------------------------------------------------------------------------------------           
             # 5. Confirmamos los cambios en la base de datos (Guardar)
             db.commit()
             
