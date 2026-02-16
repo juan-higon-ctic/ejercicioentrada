@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
@@ -16,3 +17,15 @@ class Device(Base):
     voltage = Column(Float, nullable=True) 
     current = Column(Float, nullable=True)
     power = Column(Float, nullable=True)
+    measurements = relationship("Measurement", back_populates="device")
+
+class Measurement(Base):
+    __tablename__ = "measurements"
+
+    id = Column(Integer, primary_key=True, index=True)
+    voltage = Column(Float)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    
+    # Relación con el dispositivo
+    device_id = Column(Integer, ForeignKey("devices.id"))
+    device = relationship("Device", back_populates="measurements")

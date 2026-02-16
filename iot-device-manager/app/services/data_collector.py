@@ -38,7 +38,16 @@ async def collect_data():
                     "power": round(random.uniform(2500.0, 3000.0), 2)
                 }
                 print(str(reading))
+
+                # 1. Metemeos los datos en la tabla nueva, la que usaremos como historico
+                nueva_medicion = models.Measurement(
+                    voltage=reading["voltage"],
+                    device_id=device.id,   # Lo vinculamos al ID del dispositivo
+                    timestamp=timestamp    # Usamos la hora actual
+                )
                 
+                # 2. Le decimos a la sesión que lo añada
+                db.add(nueva_medicion)
                 
                 device.voltage = reading["voltage"]
                 device.current = reading["current"]
