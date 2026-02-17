@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
-class Device(Base): #Tabla inicial
+class Device(Base): #Tabla inicial, la que guarda la medidas
     __tablename__ = "devices"
 
     id = Column(Integer, primary_key=True, index=True) #el id de cada elemento

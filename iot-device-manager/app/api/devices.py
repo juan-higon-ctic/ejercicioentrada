@@ -81,3 +81,28 @@ def rename_device(
     db.commit()
     db.refresh(device)
     return {"status": "ok", "new_name": device.name}
+
+@router.delete("/history/clear")
+def clear_history(
+    confirm: bool = Query(..., description="Debes confirmar con 'true' para borrar todo"),
+    db: Session = Depends(get_db)
+):
+    """
+    PELIGRO: Borra todos los registros de la tabla de históricos (measurements).
+    No borra los dispositivos, solo sus lecturas pasadas.
+    """
+    if not confirm:
+        raise HTTPException(status_code=400, detail="Confirmación requerida")
+
+    try:
+        # Borramos todas las filas de la tabla Measurement
+        num_rows = db.query(models.Measurement).delete()
+        db.commit()
+        
+        return {
+            "message": "Historial eliminado correctamente",
+            "filas_borradas": num_rows
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al borrar: {str(e)}")

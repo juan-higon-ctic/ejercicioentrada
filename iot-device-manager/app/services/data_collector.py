@@ -4,73 +4,97 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models
+from sqlalchemy import func  # Importamos func para contar las filas
+
+#Variables
+totalmedidas=50 #Numero maximo de medidas que puede guardar la tabla de la base de datos
+umbral=230 #Valor a partir del cual se alerta de voltage alto
+
 
 # Variable global que actúa como interruptor (ON/OFF)
-# Se cambia desde los endpoints de la API en collector.py
 running = False
 
 async def collect_data():
     """
     Función asíncrona que ejecuta el bucle de recolección.
-    Se ejecuta en segundo plano sin bloquear el resto de la API.
+    Incluye auto-limpieza al superar las 50 medidas.
     """
     global running
-    print("--- INICIANDO MOTOR DE RECOLECCIÓN DE DATOS ---")
+    # Contador de ciclos de esta sesión
+    contador_ciclos = 0 
+    
+    print("\033[94m--- MOTOR DE RECOLECCIÓN INICIADO  ---\033[0m")
     
     while running:
-        # 1. Creamos una sesión local con la base de datos
-        # Se abre y cierra en cada iteración para evitar fugas de memoria
+        contador_ciclos += 1
         db: Session = SessionLocal()
         
         try:
-            # 2. Consultamos la DB para obtener solo dispositivos con status 'active'
-            # Si un dispositivo está 'inactive', el recolector lo ignorará automáticamente
-            devices = db.query(models.Device).filter(models.Device.status == "active").all()
+            # --- MEJORA: LÓGICA DE AUTO-LIMPIEZA (50 MEDIDAS) ---
+            # Contamos cuántas filas hay actualmente en la tabla de históricos
+            total_filas = db.query(func.count(models.Measurement.id)).scalar()
             
-            # Obtenemos la hora actual para aplicarla a todas las lecturas de esta vuelta
+            if total_filas >= totalmedidas:
+                print(f"\n\033[43m\033[30m [SISTEMA] UMBRAL MÁXIMO ALCANZADO: {total_filas} medidas. \033[0m")
+                print("\033[33m Ejecutando limpieza automática del historial... \033[0m")
+                
+                # Borramos todos los registros de la tabla Measurement
+                db.query(models.Measurement).delete()
+                db.commit()
+                
+                print("\033[92m [SISTEMA] Historial vaciado. Reiniciando almacenamiento. \033[0m\n")
+            # ----------------------------------------------------
+
+            # Consultamos dispositivos activos
+            devices = db.query(models.Device).filter(models.Device.status == "active").all()
             timestamp = datetime.now()
+
+            print(f"\n\033[95m>>> INICIANDO CICLO DE MEDIDA Nº {contador_ciclos} <<<\033[0m")
             
             for device in devices:
-
+                # Generamos los valores aleatorios
                 reading = {
                     "voltage": round(random.uniform(220.0, 240.0), 2),
                     "current": round(random.uniform(10.0, 15.0), 2),
                     "power": round(random.uniform(2500.0, 3000.0), 2)
                 }
-                print(str(reading))
-#----------------------------------------------------------------------------------------------------------FUNCION VMAX
-                # 1. Metemeos los datos en la tabla nueva, la que usaremos como historico
+
+                # Creamos el objeto de medición para el histórico
                 nueva_medicion = models.Measurement(
                     voltage=reading["voltage"],
-                    device_id=device.id,   # Lo vinculamos al ID del dispositivo
-                    timestamp=timestamp    # Usamos la hora actual
+                    device_id=device.id,
+                    timestamp=timestamp
                 )
                 
-                # 2. Le decimos a la sesión que lo añada
                 db.add(nueva_medicion)
+                db.flush() # Obtenemos el ID real antes del commit
+                id_real = nueva_medicion.id 
                 
+                # Imprimimos los datos con el ID real
+                print(f"\033[93m[Registro DB #{id_real}]\033[0m Medida dispositivo: {device.name}")
+                print(f"    Valores: {reading}")
+
+                # Alerta de sobrevoltaje
+                if reading["voltage"] > umbral:
+                    print(f"\033[91m    ¡ALERTA! Voltaje crítico en registro #{id_real}: {reading['voltage']}V\033[0m")
+                
+                # Actualizamos el estado actual en la tabla de dispositivos
                 device.voltage = reading["voltage"]
                 device.current = reading["current"]
                 device.power = reading["power"]
-                
-
-                # 4. Actualizamos el tiempo 
                 device.last_reading_at = timestamp
- #-----------------------------------------------------------------------------------------------------------           
-            # 5. Confirmamos los cambios en la base de datos (Guardar)
+
+            # Confirmamos todos los cambios
             db.commit()
             
         except Exception as e:
-            # Si algo falla (ej. error de conexión), lo capturamos para que el programa no explote
-            print(f"Error en el proceso de recolección: {e}")
+            db.rollback() 
+            print(f"\033[41m Error en el proceso de recolección: {e} \033[0m")
         
         finally:
-            # 6. Cerramos la sesión de la base de datos SIEMPRE, haya error o no
             db.close()
         
-        # 7. Pausa asíncrona de 5 segundos
-        # Permite que el procesador atienda otras peticiones mientras espera
+        # Pausa de 5 segundos
         await asyncio.sleep(5) 
 
-    # Mensaje que se verá en consola cuando pongas el estado en False
-    print("--- MOTOR DE RECOLECCIÓN DETENIDO ---")
+    print("\033[94m--- MOTOR DE RECOLECCIÓN DETENIDO ---\033[0m")
