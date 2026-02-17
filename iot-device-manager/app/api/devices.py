@@ -8,7 +8,6 @@ from app.database import get_db
 # 1. Configuración del Router
 router = APIRouter(prefix="/devices", tags=["Devices"])
 
-# --- RUTAS FIJAS (SIEMPRE ARRIBA) ---
 
 @router.get("/max-voltage", summary="Obtener el récord de voltaje")
 def get_max_voltage(db: Session = Depends(get_db)):
@@ -48,7 +47,7 @@ def create_device(device: schemas.DeviceCreate, db: Session = Depends(get_db)):
     db.refresh(db_device)
     return db_device
 
-# --- RUTAS CON ID (SIEMPRE ABAJO) ---
+# --- RUTAS CON ID  ---
 
 @router.delete("/{device_id}")
 def delete_device(

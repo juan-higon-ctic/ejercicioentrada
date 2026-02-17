@@ -28,17 +28,13 @@ class DeviceResponse(BaseModel):
     class Config:
         from_attributes = True
 
-#------------------------------------------------Para la tabla de valores maximos
+
 # Esquema base con los datos comunes
 class MeasurementBase(BaseModel):
     voltage: float
     device_id: int
 
-# Esquema para cuando creamos una lectura (opcional si lo haces por código)
-class MeasurementCreate(MeasurementBase):
-    pass
-
-# Esquema para las respuestas de la API (Lo que sale hacia afuera)
+# Esquema para las respuestas de la API 
 class MeasurementResponse(MeasurementBase):
     id: int
     timestamp: datetime

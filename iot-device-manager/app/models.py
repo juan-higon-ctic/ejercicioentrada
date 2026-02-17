@@ -27,5 +27,5 @@ class Measurement(Base): #Tabla para guardar el valor maximo
     timestamp = Column(DateTime, default=datetime.utcnow)
     
     # Relación con el dispositivo
-    device_id = Column(Integer, ForeignKey("devices.id"))
-    device = relationship("Device", back_populates="measurements")
+    device_id = Column(Integer, ForeignKey("devices.id")) #columna relacionada
+    device = relationship("Device", back_populates="measurements") #relacion por python

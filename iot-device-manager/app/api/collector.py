@@ -18,12 +18,12 @@ async def start_worker():
     # 2. Cambiamos la variable global a True para permitir que el bucle se ejecute
     data_collector.running = True
     
-    # 3. 'asyncio.create_task' es clave: dispara la función en segundo plano.
+    # 3. 'asyncio.create_task' dispara la función en segundo plano.
     # Esto permite que la API responda "OK" de inmediato al usuario 
     # mientras el motor sigue trabajando por su cuenta en la terminal.
     asyncio.create_task(data_collector.collect_data())
     
-    return {"status": "Recolector iniciado"}
+    return {"status": "Recolector iniciado"} #informamos al usuario de que funciona 
 
 @router.post("/stop")
 async def stop_worker():
