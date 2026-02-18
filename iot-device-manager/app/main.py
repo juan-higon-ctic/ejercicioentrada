@@ -19,7 +19,7 @@ app.include_router(devices.router)
 # 'collector.router' contiene las rutas para iniciar/parar la recolección
 app.include_router(collector.router)
 
-# 4. Ruta base 
+# 4. Rutas 
 @app.get("/", tags=["General"])
 def read_root():
     return {
@@ -28,7 +28,7 @@ def read_root():
         "status": "online"
     }
 
-# Si quieres que el servidor se detenga limpiamente, puedes añadir eventos aquí
+# Eventos de cuando se apaga el servidor
 @app.on_event("shutdown")
 def shutdown_event():
     print("Apagando el sistema de gestión IoT...")

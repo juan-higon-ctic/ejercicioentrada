@@ -105,3 +105,20 @@ def clear_history(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error al borrar: {str(e)}")
+    
+@router.put("/{device_id}/status")
+def status_device(
+    device_id: int, 
+    newstatus: bool = Query(..., description="Debes elegir el status del dispositivo"),
+    db: Session = Depends(get_db)
+):
+    """Actualizar el nombre de un dispositivo existente."""
+    device = db.query(models.Device).filter(models.Device.id == device_id).first()
+    
+    if not device:
+        raise HTTPException(status_code=404, detail="Dispositivo no encontrado")
+    
+    device.status = newstatus
+    db.commit()
+    db.refresh(device)
+    return {"status": "ok", "new_name": device.name}

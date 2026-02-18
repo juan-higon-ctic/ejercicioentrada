@@ -7,7 +7,7 @@ from typing import Optional, List
 class DeviceCreate(BaseModel):
     name: str
     device_type: str
-    status: str = "active"
+    status: bool = True
 
 class DeviceUpdateName(BaseModel): #funcion para cmambiar el nombre
     name: str
@@ -18,7 +18,7 @@ class DeviceResponse(BaseModel):
     id: int
     name: str
     device_type: str
-    status: str
+    status: bool
     created_at: datetime
     last_reading_at: Optional[datetime] = None
     voltage: Optional[float] = None
@@ -32,6 +32,8 @@ class DeviceResponse(BaseModel):
 # Esquema base con los datos comunes
 class MeasurementBase(BaseModel):
     voltage: float
+    current: float
+    power: float
     device_id: int
 
 # Esquema para las respuestas de la API 

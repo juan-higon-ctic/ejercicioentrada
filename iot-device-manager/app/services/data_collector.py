@@ -46,7 +46,8 @@ async def collect_data():
             # ----------------------------------------------------
 
             # Consultamos dispositivos activos
-            devices = db.query(models.Device).filter(models.Device.status == "active").all()
+            # En tu script de recolección:
+            devices = db.query(models.Device).filter(models.Device.status == True).all()    
             timestamp = datetime.now()
 
             print(f"\n\033[95m>>> INICIANDO CICLO DE MEDIDA Nº {contador_ciclos} <<<\033[0m")
@@ -62,6 +63,8 @@ async def collect_data():
                 # Creamos el objeto de medición para el histórico
                 nueva_medicion = models.Measurement(
                     voltage=reading["voltage"],
+                    current=reading["current"],
+                    power=reading["power"],
                     device_id=device.id,
                     timestamp=timestamp
                 )

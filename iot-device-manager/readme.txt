@@ -45,6 +45,7 @@ POST /devices/ --Añade un dispositivo
 DELETE /devices/{devices_id} --Borra un dispositivo, hay que concretar su id 
 PATCH /devices/{devices_id} --Cambia el nombre de un dispositivo, hay que concreta su id
 DELETE /devices/history/clear --Borra toda la base de datos. SE ACTIVA AUTOMATICAMENTE CUANDO EL NUMERO DE MEDIAS SUPERA UN UMBRAL ESTABLECIDO, POR DEFECTO 50.
+PUT /devices/{devices_id}/status --Cambia el status de un dispositivo
 
 Collector Control
 /collector/start--Inicia el proceso de recoleccion de Datos
@@ -78,4 +79,4 @@ http://127.0.0.1:3000/
 Bases de datos
 
 iot.db Contiene dos tablas relacionadas por el id del dispositivo, una sirve para obtener los datos de la ultima medida, la otra para guardar los valores historicos, se utitiliza
-para obtener el valor maximo cuando se usa el comando GET /devices/max-voltage. 
+para obtener el valor maximo de los voltios cuando se usa el comando GET /devices/max-voltage. 

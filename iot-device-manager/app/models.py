@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
@@ -9,7 +9,7 @@ class Device(Base): #Tabla inicial, la que guarda la medidas
     id = Column(Integer, primary_key=True, index=True) #el id de cada elemento
     name = Column(String, index=True) #el nombre de cada elemento
     device_type = Column(String)  # Ej: "sensor_temperatura"
-    status = Column(String, default="active")  # Ej: "active", "inactive"
+    status = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     # Este campo puede estar vacío (nullable) al principio
     last_reading_at = Column(DateTime, nullable=True)
@@ -24,6 +24,8 @@ class Measurement(Base): #Tabla para guardar el valor maximo
 
     id = Column(Integer, primary_key=True, index=True)
     voltage = Column(Float)
+    current = Column(Float)
+    power = Column(Float)
     timestamp = Column(DateTime, default=datetime.utcnow)
     
     # Relación con el dispositivo
