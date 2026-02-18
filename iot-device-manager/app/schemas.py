@@ -33,12 +33,18 @@ class DeviceResponse(BaseModel):
 class MeasurementBase(BaseModel):
     voltage: float
     current: float
+    medida: int
     power: float
     device_id: int
 
 # Esquema para las respuestas de la API 
 class MeasurementResponse(MeasurementBase):
     id: int
+    measurement_number: int  # <--- Este es el campo clave
+    voltage: float
+    current: float
+    power: float
+    device_id: int
     timestamp: datetime
 
     class Config:

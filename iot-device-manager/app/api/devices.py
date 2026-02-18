@@ -15,6 +15,8 @@ def get_max_voltage(db: Session = Depends(get_db)):
     Busca en el historial el voltaje más alto registrado y 
     nos devuelve el valor, el ID y el nombre del dispositivo.
     """
+    top_measurement = db.query(models.Measurement).order_by(models.Measurement.voltage.desc()).first()
+
     # Realizamos un JOIN entre Measurements y Devices para sacar el nombre
     record = db.query(models.Measurement)\
                .join(models.Device)\
@@ -28,7 +30,8 @@ def get_max_voltage(db: Session = Depends(get_db)):
         "max_voltage": record.voltage,
         "device_id": record.device_id,
         "device_name": record.device.name,
-        "at_time": record.timestamp
+        "at_time": record.timestamp,
+        "measurement_number": top_measurement.Measurement
     }
 
 # --- RUTAS GENERALES ---

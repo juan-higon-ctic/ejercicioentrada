@@ -27,6 +27,7 @@ class Measurement(Base): #Tabla para guardar el valor maximo
     current = Column(Float)
     power = Column(Float)
     timestamp = Column(DateTime, default=datetime.utcnow)
+    Measurement= Column(Integer, nullable=True)
     
     # Relación con el dispositivo
     device_id = Column(Integer, ForeignKey("devices.id")) #columna relacionada

@@ -33,6 +33,7 @@ async def collect_data():
             # --- MEJORA: LÓGICA DE AUTO-LIMPIEZA (50 MEDIDAS) ---
             # Contamos cuántas filas hay actualmente en la tabla de históricos
             total_filas = db.query(func.count(models.Measurement.id)).scalar()
+            proximo_numero = total_filas + 1
             
             if total_filas >= totalmedidas:
                 print(f"\n\033[43m\033[30m [SISTEMA] UMBRAL MÁXIMO ALCANZADO: {total_filas} medidas. \033[0m")
@@ -62,6 +63,7 @@ async def collect_data():
 
                 # Creamos el objeto de medición para el histórico
                 nueva_medicion = models.Measurement(
+                    Measurement=proximo_numero,
                     voltage=reading["voltage"],
                     current=reading["current"],
                     power=reading["power"],
