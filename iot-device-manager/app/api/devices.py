@@ -34,7 +34,7 @@ def get_max_voltage(db: Session = Depends(get_db)):
         "measurement_number": top_measurement.Measurement
     }
 
-# --- RUTAS GENERALES ---
+
 
 @router.get("/", response_model=List[schemas.DeviceResponse])
 def read_devices(db: Session = Depends(get_db)):
@@ -50,7 +50,7 @@ def create_device(device: schemas.DeviceCreate, db: Session = Depends(get_db)):
     db.refresh(db_device)
     return db_device
 
-# --- RUTAS CON ID  ---
+
 
 @router.delete("/{device_id}")
 def delete_device(
