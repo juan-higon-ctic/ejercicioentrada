@@ -1,0 +1,14 @@
+# Python - Archivos compilados y caché
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de datos local 
+*.db
+*.sqlite3
+
+# Docker
+.docker/
+
+# Archivos del sistema de windows
+Thumbs.db 
